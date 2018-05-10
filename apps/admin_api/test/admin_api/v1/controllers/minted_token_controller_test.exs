@@ -98,6 +98,29 @@ defmodule AdminAPI.V1.MintedTokenControllerTest do
       assert mint == nil
     end
 
+    # Verifies https://github.com/omisego/ewallet/issues/177
+    test "inserts a new minted token successfully if enable_client_auth == false" do
+      Application.put_env(:admin_api, :enable_client_auth, false)
+
+      response =
+        user_request(
+          "/minted_token.create",
+          %{
+            symbol: "BTC",
+            name: "Bitcoin",
+            subunit_to_unit: 100,
+            metadata: %{},
+            encrypted_metadata: %{}
+          },
+          :ok,
+          false
+        )
+
+      assert response["success"]
+      assert response["data"]["object"] == "minted_token"
+      assert response["data"]["symbol"] == "BTC"
+    end
+
     test "inserts a new minted token with no minting if amount is nil" do
       response =
         user_request("/minted_token.create", %{
