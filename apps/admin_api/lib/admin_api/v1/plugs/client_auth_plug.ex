@@ -2,8 +2,24 @@ defmodule AdminAPI.V1.ClientAuthPlug do
   @moduledoc """
   This plug checks if valid `api_key_id` and `api_key` are provided.
 
-  If `api_key_id` and `api_key` matches the database record, the plug assigns
-  the `api_key_id` and `account` to the connection along with `authenticated: true`.
+  On success, the plug assigns the following `conn.assigns`:
+
+    - `authenticated`: Set to `:client` to indicate that the request has been authenticated
+                       at the client level.
+    - `api_key_id`: The API key used to authenticate the request.
+    - `auth_account`: The account that is associated with the API key.
+
+  On failure, the plug halts, then assigns the following `conn.assigns`:
+
+    - `authenticated`: Set to `false`.
+    - `api_key_id`: Not assigned.
+    - `auth_account`: Not assigned.
+
+  If client auth is disabled, the plug does not halt but assigns the following `conn.assigns`:
+
+    - `authenticated`: Set to `false`.
+    - `api_key_id`: Not assigned.
+    - `auth_account`: Not assigned.
   """
   import Plug.Conn
   import AdminAPI.V1.ErrorHandler
