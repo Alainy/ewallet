@@ -53,7 +53,7 @@ defmodule AdminAPI.V1.MintedTokenController do
   @doc """
   Creates a new Minted Token.
   """
-  def create(%{assigns: %{account: account}} = conn, attrs) do
+  def create(%{assigns: %{auth_account: account}} = conn, attrs) do
     inserted_minted_token =
       attrs
       |> Map.put("account_uuid", account.uuid)
